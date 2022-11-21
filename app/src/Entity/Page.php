@@ -24,14 +24,6 @@ class Page
     private Book $book;
 
     /**
-     * @return Book
-     */
-    public function getBook(): Book
-    {
-        return $this->book;
-    }
-
-    /**
      * @param Book $book
      */
     public function setBook(Book $book): void
@@ -67,4 +59,6 @@ class Page
 
         return $this;
     }
+
+
 }

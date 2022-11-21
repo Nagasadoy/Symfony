@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Entity\Page;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,23 +24,14 @@ class BookController extends AbstractController
     public function getAll(): Response
     {
         $books = $this->em->getRepository(Book::class)->findAll();
-        foreach ($books as $book) {
-            foreach ($book->getPages() as $page) {
-                $p = $page;
-            }
-        }
-        return $this->json([
-            'books' => $books
-        ]);
+        return $this->json(['books' => $books]);
     }
 
     #[Route('/{id}', name: 'get_book_by_id', methods: ['GET'])]
-    public function getById($id): Response
+    public function getById(int $id): Response
     {
         $book = $this->em->getRepository(Book::class)->find($id);
-        return $this->json([
-            'book' => $book
-        ]);
+        return $this->json($book);
     }
 
     #[Route('/create', name: 'book_create', methods: ['POST'])]
@@ -50,25 +43,14 @@ class BookController extends AbstractController
             $newBook = new Book();
             $newBook->setName($name);
 
+            if (isset($content['pages']) && is_array($content['pages'])) {
+                foreach ($content['pages'] as $pageData) {
+                    $newBook->addPage($pageData['pageNumber'], $pageData['text']);
+                }
+            }
+
             $this->em->persist($newBook);
             $this->em->flush();
-
-            if (isset($content['pages'])) {
-                $bookPages = [];
-                $pages = $content['pages'];
-                foreach ($pages as $pageData) {
-                    $page = new Page();
-                    $page->setText($pageData['text']);
-                    $page->setPageNumber($pageData['pageNumber']);
-                    $page->setBook($newBook);
-                    $this->em->persist($page);
-                    $this->em->flush();
-                    $bookPages[] = $page;
-                }
-                $newBook->setPages($bookPages);
-                $this->em->persist($newBook);
-                $this->em->flush();
-            }
 
             return $this->json([
                 'statusCode' => Response::HTTP_CREATED,
@@ -83,14 +65,76 @@ class BookController extends AbstractController
     }
 
     #[Route('/remove/{id}', methods: ['DELETE'])]
-    public function removeBookById($id): Response
+    public function removeBookById(int $id): Response
     {
         $book = $this->em->getRepository(Book::class)->find($id);
+
+        if (!$book) {
+            return $this->json([
+                'statusCode' => Response::HTTP_NOT_FOUND
+            ]);
+        }
+
         $this->em->remove($book);
         $this->em->flush();
 
         return $this->json([
-           'statusCode' => Response::HTTP_OK
+            'statusCode' => Response::HTTP_OK
         ]);
+    }
+
+    #[Route('edit/{id}', methods: ['PATCH'])]
+    public function editBook(Request $request, int $id): Response
+    {
+        $book = $this->em->getRepository(Book::class)->find($id);
+        if (!$book) {
+            return $this->json([
+                'statusCode' => Response::HTTP_NOT_FOUND
+            ]);
+        }
+
+        if (isset($content['name'])) {
+            $book->setName($content['name']);
+        }
+
+        if (isset($content['pages'])) {
+            $pages = $content['pages'];
+            foreach ($pages as $page){
+
+            }
+        }
+
+        try {
+            $book->setPages([]);
+            $content = $request->toArray();
+
+            $name = $content['name'];
+            foreach ($content['pages'] as $page) {
+                echo '$book->addPage($);';
+            }
+
+
+//            $content = $request->toArray();
+//            $name = $content['name'];
+//            $newBook = new Book();
+//            $newBook->setName($name);
+//
+//            if (isset($content['pages']) && is_array($content['pages'])) {
+//                foreach ($content['pages'] as $pageData) {
+//                    $newBook->addPage($pageData['pageNumber'], $pageData['text']);
+//                }
+//            }
+//
+//            $this->em->persist($newBook);
+//            $this->em->flush();
+//
+            return $this->json([
+                'statusCode' => Response::HTTP_CREATED,
+            ]);
+        } catch (\Throwable) {
+            return $this->json([
+                'statusCode' => Response::HTTP_BAD_REQUEST
+            ]);
+        }
     }
 }

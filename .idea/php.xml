@@ -38,4 +38,9 @@
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
+  <component name="PhpStepFilterConfiguration">
+    <skipped_functions>
+      <skipped_function name="Symfony\Bundle\FrameworkBundle\Controller\AbstractController-&gt;json" />
+    </skipped_functions>
+  </component>
 </project>
