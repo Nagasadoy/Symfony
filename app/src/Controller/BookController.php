@@ -15,7 +15,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class BookController extends AbstractController
 {
-
     public function __construct(private readonly EntityManagerInterface $em)
     {
     }
@@ -93,48 +92,31 @@ class BookController extends AbstractController
             ]);
         }
 
+        $content = $request->toArray();
+
         if (isset($content['name'])) {
             $book->setName($content['name']);
         }
 
         if (isset($content['pages'])) {
-            $pages = $content['pages'];
-            foreach ($pages as $page){
-
+            try {
+                $this->em->getRepository(Book::class)->removeAllPages($id);
+                foreach ($content['pages'] as $pageData) {
+                    $book->addPage($pageData['pageNumber'], $pageData['text']);
+                }
+            } catch (\Throwable) {
+                return $this->json([
+                    'statusCode' => Response::HTTP_I_AM_A_TEAPOT,
+                ]);
             }
         }
 
-        try {
-            $book->setPages([]);
-            $content = $request->toArray();
+        $this->em->persist($book);
+        $this->em->flush();
 
-            $name = $content['name'];
-            foreach ($content['pages'] as $page) {
-                echo '$book->addPage($);';
-            }
-
-
-//            $content = $request->toArray();
-//            $name = $content['name'];
-//            $newBook = new Book();
-//            $newBook->setName($name);
-//
-//            if (isset($content['pages']) && is_array($content['pages'])) {
-//                foreach ($content['pages'] as $pageData) {
-//                    $newBook->addPage($pageData['pageNumber'], $pageData['text']);
-//                }
-//            }
-//
-//            $this->em->persist($newBook);
-//            $this->em->flush();
-//
-            return $this->json([
-                'statusCode' => Response::HTTP_CREATED,
-            ]);
-        } catch (\Throwable) {
-            return $this->json([
-                'statusCode' => Response::HTTP_BAD_REQUEST
-            ]);
-        }
+        return $this->json([
+            'statusCode' => Response::HTTP_OK,
+            'book' => $book
+        ]);
     }
 }

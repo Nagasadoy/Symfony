@@ -18,7 +18,7 @@ services:
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
-#            - '../src/Normalizer/' Если это раскомментировать, то будет использоваться normalizer из этой папки
+            - '../src/Normalizer/' # Если это закомментировать, то будет использоваться normalizer из этой папки
             - '../src/Kernel.php'
 
 
