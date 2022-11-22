@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Entity\Page;
+use App\Repository\BookRepository;
+use App\Services\BookService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,17 +14,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class BookController extends AbstractController
 {
-    public function __construct(private readonly EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em, private readonly BookService $bookService)
     {
     }
 
     #[Route('/', name: 'get_book_all', methods: ['GET'])]
     public function getAll(): Response
     {
-        $books = $this->em->getRepository(Book::class)->findAll();
+        $books = $this->bookService->getAll();
         return $this->json(['books' => $books]);
     }
 
@@ -55,15 +58,15 @@ class BookController extends AbstractController
                 'statusCode' => Response::HTTP_CREATED,
                 'id' => $newBook->getId(),
                 'date' => date("d.m.Y H:i:s")
-            ]);
+            ], Response::HTTP_CREATED);
         } catch (\Throwable) {
             return $this->json([
                 'statusCode' => Response::HTTP_BAD_REQUEST
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 
-    #[Route('/remove/{id}', methods: ['DELETE'])]
+    #[Route('/remove/{id}', name: 'book_remove', methods: ['DELETE'])]
     public function removeBookById(int $id): Response
     {
         $book = $this->em->getRepository(Book::class)->find($id);
@@ -71,7 +74,7 @@ class BookController extends AbstractController
         if (!$book) {
             return $this->json([
                 'statusCode' => Response::HTTP_NOT_FOUND
-            ]);
+            ], Response::HTTP_NOT_FOUND);
         }
 
         $this->em->remove($book);
@@ -82,36 +85,34 @@ class BookController extends AbstractController
         ]);
     }
 
-    #[Route('edit/{id}', methods: ['PATCH'])]
+    #[Route('edit/{id}', name: 'book_edit', methods: ['PATCH'])]
     public function editBook(Request $request, int $id): Response
     {
         $book = $this->em->getRepository(Book::class)->find($id);
+
         if (!$book) {
             return $this->json([
                 'statusCode' => Response::HTTP_NOT_FOUND
-            ]);
+            ], Response::HTTP_NOT_FOUND);
         }
-
         $content = $request->toArray();
 
         if (isset($content['name'])) {
             $book->setName($content['name']);
         }
-
         if (isset($content['pages'])) {
             try {
-                $this->em->getRepository(Book::class)->removeAllPages($id);
+                $book->clearPages();
                 foreach ($content['pages'] as $pageData) {
                     $book->addPage($pageData['pageNumber'], $pageData['text']);
                 }
             } catch (\Throwable) {
                 return $this->json([
-                    'statusCode' => Response::HTTP_I_AM_A_TEAPOT,
-                ]);
+                    'statusCode' => Response::HTTP_BAD_REQUEST,
+                ], status: Response::HTTP_BAD_REQUEST);
             }
         }
 
-        $this->em->persist($book);
         $this->em->flush();
 
         return $this->json([
@@ -120,3 +121,12 @@ class BookController extends AbstractController
         ]);
     }
 }
+
+// Если нужно выполнить что-то в одной транзакции, то можно написать вот так
+
+//                $this->em->wrapInTransaction(function () use ($bookRepository, $id, $content, $book) {
+//                    $bookRepository->removeAllPages($id);
+//                    foreach ($content['pages'] as $pageData) {
+//                        $book->addPage($pageData['pageNumber'], $pageData['text']);
+//                    }
+//                });

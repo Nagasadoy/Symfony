@@ -19,7 +19,7 @@ class Book
     private ?string $name = null;
 
     /** @var Collection */
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: Page::class, cascade: ['remove', 'persist'])]
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: Page::class, cascade: ['remove', 'persist'], orphanRemoval: true)]
     private $pages;
 
     public function __construct()
@@ -53,6 +53,11 @@ class Book
         $page->setPageNumber($pageNumber);
         $page->setText($pageText);
         $this->pages->add($page);
+    }
+
+    public function clearPages(): void
+    {
+        $this->pages->clear();
     }
 
 

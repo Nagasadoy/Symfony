@@ -10,6 +10,9 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            bool $isDebug: '%kernel.debug%' # Теперь везде где у нас есть это свойство оно будет равно этой переменной
+
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -18,8 +21,30 @@ services:
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
-            - '../src/Normalizer/' # Если это закомментировать, то будет использоваться normalizer из этой папки
+            - '../src/Normalizer/' # Если это закомментировать, то будет использоваться normalizer из этой папки или указать этот сервис ниже
             - '../src/Kernel.php'
+
+#    App\Normalizer\BookNormalizer:
+#        class: App\Normalizer\BookNormalizer
+#        arguments:
+#            $param: '4'
+
+    # если прокидывается интерфейс и его реализуют несколько классов,
+    # то надо явно указать di экземляр какого класса нужно прокидывать в конструктор
+
+    App\Services\TestInterface: '@App\Services\Test1'
+
+    App\Services\DymmyClass: '@app.dummy'
+    app.dummy:
+        class: App\Services\DymmyClass
+        calls:
+            - setC: [14]
+        properties:
+            d: 'property d'
+        # bind тоже самое что и аргумент, но мощнее, поэтому лучше использовать это
+        bind:
+            $a: 1
+            $b: 'string msg'
 
 
     # add more service definitions when explicit configuration is needed

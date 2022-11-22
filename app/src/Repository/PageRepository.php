@@ -39,28 +39,23 @@ class PageRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Page[] Returns an array of Page objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function removeByBook(int $bookId): void
+    {
+        // Элиас p для текущей таблицы
+        $this->createQueryBuilder('p')
+            ->delete()
+            ->where('p.book = :bookId')
+            ->setParameter('bookId', $bookId)
+            ->getQuery()
+            ->execute();
 
-//    public function findOneBySomeField($value): ?Page
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
+        // Но через entity manager мы можем работать с любой таблицей, но тогда нужно использовать метод from
+//        $this->getEntityManager()->createQueryBuilder('p')
+//            ->from(Page::class, 'p')
+//            ->delete()
+//            ->where('p.book = :bookId')
+//            ->setParameter('bookId', $bookId)
 //            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+//            ->execute();
+    }
 }

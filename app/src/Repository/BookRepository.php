@@ -38,15 +38,4 @@ class BookRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-
-    public function removeAllPages(int $bookId): void
-    {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = '
-            DELETE FROM page p
-            WHERE p.book_id = :bookId
-        ';
-        $stmt = $conn->prepare($sql);
-        $stmt->executeQuery(['bookId' => $bookId]);
-    }
 }
