@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PageRepository::class)]
 class Page
@@ -15,6 +16,7 @@ class Page
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\GreaterThan(0)]
     private ?int $pageNumber = null;
 
     #[ORM\Column(type: Types::TEXT)]

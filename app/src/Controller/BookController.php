@@ -22,21 +22,22 @@ class BookController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'get_book_all', methods: ['GET'])]
+    #[Route('/book', name: 'get_book_all', methods: ['GET'])]
     public function getAll(): Response
     {
+//        $user = $this->getUser();
         $books = $this->bookService->getAll();
         return $this->json(['books' => $books]);
     }
 
-    #[Route('/{id}', name: 'get_book_by_id', methods: ['GET'])]
+    #[Route('/book/{id}', name: 'get_book_by_id', methods: ['GET'])]
     public function getById(int $id): Response
     {
         $book = $this->em->getRepository(Book::class)->find($id);
         return $this->json($book);
     }
 
-    #[Route('/create', name: 'book_create', methods: ['POST'])]
+    #[Route('/book/create', name: 'book_create', methods: ['POST'])]
     public function createBook(Request $request): Response
     {
         try {
@@ -66,7 +67,7 @@ class BookController extends AbstractController
         }
     }
 
-    #[Route('/remove/{id}', name: 'book_remove', methods: ['DELETE'])]
+    #[Route('/book/remove/{id}', name: 'book_remove', methods: ['DELETE'])]
     public function removeBookById(int $id): Response
     {
         $book = $this->em->getRepository(Book::class)->find($id);
@@ -85,7 +86,7 @@ class BookController extends AbstractController
         ]);
     }
 
-    #[Route('edit/{id}', name: 'book_edit', methods: ['PATCH'])]
+    #[Route('/book/edit/{id}', name: 'book_edit', methods: ['PATCH'])]
     public function editBook(Request $request, int $id): Response
     {
         $book = $this->em->getRepository(Book::class)->find($id);
