@@ -27,6 +27,10 @@ class Book
         $this->pages = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->name;
+    }
 
     public function getPages(): Collection
     {

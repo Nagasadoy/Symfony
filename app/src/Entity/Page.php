@@ -25,6 +25,10 @@ class Page
     #[ORM\ManyToOne(targetEntity: Book::class, inversedBy: 'pages')]
     private Book $book;
 
+    public function getBook(): Book
+    {
+        return $this->book;
+    }
     /**
      * @param Book $book
      */
