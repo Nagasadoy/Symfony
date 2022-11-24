@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\PageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PageRepository::class)]
@@ -23,6 +25,7 @@ class Page
     private ?string $text = null;
 
     #[ORM\ManyToOne(targetEntity: Book::class, inversedBy: 'pages')]
+    #[Groups('pages')]
     private Book $book;
 
     public function getBook(): Book

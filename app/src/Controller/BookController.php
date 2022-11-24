@@ -9,6 +9,7 @@ use App\Services\BookService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,10 +23,13 @@ class BookController extends AbstractController
     {
     }
 
+//    #[IsGranted('ROLE_ADMIN')]
     #[Route('/book', name: 'get_book_all', methods: ['GET'])]
     public function getAll(): Response
     {
-//        $user = $this->getUser();
+//        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Доступ ограничен,
+//            только админы могут посмотреть весь список');
+
         $books = $this->bookService->getAll();
         return $this->json(['books' => $books]);
     }

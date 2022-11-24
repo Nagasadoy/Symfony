@@ -24,8 +24,9 @@ class FormController extends AbstractController
     #[Route('/ok/{id}', name: 'pageLoad')]
     public function pageLoad($id): Response
     {
+        $user= $this->getUser();
         $page = $this->pageRepository->find($id);
-        return $this->json(['ok' => $page]);
+        return $this->json(['ok' => $page, 'user' => $user->getUserIdentifier()]);
     }
 
     #[Route('/')]

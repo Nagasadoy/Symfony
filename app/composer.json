@@ -11,6 +11,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.13",
         "easycorp/easyadmin-bundle": "^4.4",
+        "sensio/framework-extra-bundle": "^6.2",
         "squizlabs/php_codesniffer": "^3.7",
         "symfony/console": "6.1.*",
         "symfony/dotenv": "6.1.*",
@@ -19,11 +20,14 @@
         "symfony/framework-bundle": "6.1.*",
         "symfony/property-access": "6.1.*",
         "symfony/proxy-manager-bridge": "6.1.*",
+        "symfony/rate-limiter": "6.1.*",
         "symfony/runtime": "6.1.*",
+        "symfony/security-bundle": "6.1.*",
         "symfony/serializer": "6.1.*",
         "symfony/twig-bundle": "6.1.*",
         "symfony/validator": "6.1.*",
         "symfony/yaml": "6.1.*",
+        "symfonycasts/verify-email-bundle": "^1.12",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
     },
@@ -80,6 +84,8 @@
         }
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.48"
+        "symfony/maker-bundle": "^1.48",
+        "symfony/stopwatch": "6.1.*",
+        "symfony/web-profiler-bundle": "6.1.*"
     }
 }

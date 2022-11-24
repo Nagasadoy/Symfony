@@ -14,6 +14,7 @@ framework:
     serializer:
         enabled: true
         enable_annotations: true
+        circular_reference_handler: App\Utils\CircularReferenceHandler
     #esi: true
     #fragments: true
     php_errors:
