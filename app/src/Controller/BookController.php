@@ -41,7 +41,7 @@ class BookController extends AbstractController
         return $this->json($book);
     }
 
-    #[Route('/book/create', name: 'book_create', methods: ['POST'])]
+    #[Route('api/book/create', name: 'book_create', methods: ['POST'])]
     public function createBook(Request $request): Response
     {
         try {
