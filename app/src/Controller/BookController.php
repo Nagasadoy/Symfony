@@ -9,6 +9,8 @@ use App\Services\BookService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,6 +36,36 @@ class BookController extends AbstractController
         return $this->json(['books' => $books]);
     }
 
+    #[Route('/book/like', methods: ['GET'])]
+    public function bookLike(Request $request, BookRepository $bookRepository): Response
+    {
+        $content = $request->toArray();
+
+        $bookLike = $content['name'];
+
+        $books = $bookRepository->getBookLike($bookLike);
+        return $this->json($books);
+    }
+
+    #[Route('/book/{color}/color/{page}', methods: ['GET'])]
+    public function boolEqualColor(int $page, string $color, BookRepository $bookRepository): Response
+    {
+//        $content = $request->toArray();
+//        $maxPerPage = $content['maxPerPage'] ?? 10;
+
+        $maxPerPage = 3;
+
+        $queryBuilder = $bookRepository->createBookEqualColorQueryBuilder($color);
+        $adapter = new QueryAdapter($queryBuilder);
+        $data = Pagerfanta::createForCurrentPageWithMaxPerPage(
+            $adapter,
+            $page,
+            $maxPerPage
+        );
+
+        return $this->json($data);
+    }
+
     #[Route('/book/{id}', name: 'get_book_by_id', methods: ['GET'])]
     public function getById(int $id): Response
     {
@@ -41,7 +73,19 @@ class BookController extends AbstractController
         return $this->json($book);
     }
 
-    #[Route('/book/create', name: 'book_create', methods: ['POST'])]
+    #[Route('/book/upload', name: 'book_upload', methods: ['POST'])]
+    public function uploadFile(Request $request): Response
+    {
+        dd($request->files->get('image'));
+    }
+
+    #[Route('/upload-file', name: 'upload_file')]
+    public function renderUploadFilePage(): Response
+    {
+        return $this->render('book/book.html.twig');
+    }
+
+    #[Route('api/book/create', name: 'book_create', methods: ['POST'])]
     public function createBook(Request $request): Response
     {
         try {
@@ -49,6 +93,9 @@ class BookController extends AbstractController
             $name = $content['name'];
             $newBook = new Book();
             $newBook->setName($name);
+
+            $color = $content['color'] ?? 'red';
+            $newBook->setColor($color);
 
             if (isset($content['pages']) && is_array($content['pages'])) {
                 foreach ($content['pages'] as $pageData) {
@@ -62,9 +109,9 @@ class BookController extends AbstractController
             return $this->json([
                 'statusCode' => Response::HTTP_CREATED,
                 'id' => $newBook->getId(),
-                'date' => date("d.m.Y H:i:s")
+                'date' => new \DateTimeImmutable()
             ], Response::HTTP_CREATED);
-        } catch (\Throwable) {
+        } catch (\Throwable $ex) {
             return $this->json([
                 'statusCode' => Response::HTTP_BAD_REQUEST
             ], Response::HTTP_BAD_REQUEST);

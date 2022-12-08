@@ -3,16 +3,25 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use DomainException;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationFailureHandler;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationSuccessHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class ApiLoginController extends AbstractController
 {
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
-    public function index(#[CurrentUser] ?User $user): Response
+    public function index(
+        #[CurrentUser] ?User $user,
+        AuthenticationSuccessHandler $successHandler,
+        AuthenticationFailureHandler $failureHandler,
+        Request $request,
+    ): Response
     {
         if (null === $user) {
             return $this->json([
@@ -20,10 +29,11 @@ class ApiLoginController extends AbstractController
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-
-        return $this->json([
-            'user' => $user->getUserIdentifier()
-        ]);
+        try {
+            return $successHandler->handleAuthenticationSuccess($user);
+        } catch (DomainException $exception) {
+            return $failureHandler->onAuthenticationFailure($request, new AuthenticationException());
+        }
     }
 
 //    #[Route('/api/login', name: 'api_login', methods: ['POST'])]

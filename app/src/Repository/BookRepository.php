@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,5 +38,21 @@ class BookRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getBookLike(string $likeName): array
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.name LIKE :likeName')
+            ->setParameter('likeName', '%'.$likeName.'%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function createBookEqualColorQueryBuilder(string $color): QueryBuilder
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.color = :colorName')
+            ->setParameter('colorName', $color);
     }
 }
