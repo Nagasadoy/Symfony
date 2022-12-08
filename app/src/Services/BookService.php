@@ -22,4 +22,9 @@ class BookService
         // авторизованному пользователю
         return $this->bookRepository->findAll();
     }
+
+//    public function getBooksLike(string $likeName)
+//    {
+//
+//    }
 }

@@ -13,4 +13,8 @@ return [
     Symfony\Bundle\WebProfilerBundle\WebProfilerBundle::class => ['dev' => true, 'test' => true],
     Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle::class => ['all' => true],
     Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle::class => ['all' => true],
+    Knp\Bundle\MarkdownBundle\KnpMarkdownBundle::class => ['all' => true],
+    Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
+    Zenstruck\Foundry\ZenstruckFoundryBundle::class => ['dev' => true, 'test' => true],
+    BabDev\PagerfantaBundle\BabDevPagerfantaBundle::class => ['all' => true],
 ];

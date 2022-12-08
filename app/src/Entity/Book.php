@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -17,6 +18,9 @@ class Book
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $color = null;
 
     /** @var Collection */
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: Page::class, cascade: ['remove', 'persist'], orphanRemoval: true)]
@@ -81,4 +85,10 @@ class Book
 
         return $this;
     }
+
+    public function setColor(string $color): void
+    {
+        $this->color = $color;
+    }
+
 }
