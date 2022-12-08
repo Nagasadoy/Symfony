@@ -22,6 +22,9 @@ class Book
     #[ORM\Column(length: 255)]
     private ?string $color = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $imageFileName;
+
     /** @var Collection */
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: Page::class, cascade: ['remove', 'persist'], orphanRemoval: true)]
     private $pages;
@@ -89,6 +92,11 @@ class Book
     public function setColor(string $color): void
     {
         $this->color = $color;
+    }
+
+    public function setFileName(string $imageFileName): void
+    {
+        $this->imageFileName = $imageFileName;
     }
 
 }

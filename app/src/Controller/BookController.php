@@ -6,13 +6,16 @@ use App\Entity\Book;
 use App\Entity\Page;
 use App\Repository\BookRepository;
 use App\Services\BookService;
+use App\Services\UploadedHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Gedmo\Sluggable\Util\Urlizer;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,10 +76,27 @@ class BookController extends AbstractController
         return $this->json($book);
     }
 
+    /**
+     * Сохранение загруженного файла
+     */
     #[Route('/book/upload', name: 'book_upload', methods: ['POST'])]
-    public function uploadFile(Request $request): Response
-    {
-        dd($request->files->get('image'));
+    public function uploadFile(
+        Request $request,
+        BookRepository $bookRepository,
+        UploadedHelper $uploadedHelper
+    ): Response {
+        /** @var UploadedFile $uploadedFile */
+        $uploadedFile = $request->files->get('image');
+        if ($uploadedFile) {
+            $newFileName = $uploadedHelper->uploadArticleImage($uploadedFile);
+
+            /** @var Book $book */
+            $book = $bookRepository->find(255);
+            $book->setFileName($newFileName);
+            $this->em->flush();
+        }
+
+        return $this->json(['status' => Response::HTTP_OK]);
     }
 
     #[Route('/upload-file', name: 'upload_file')]

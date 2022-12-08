@@ -7,3 +7,4 @@ app/public/bundles/
 app/var/
 app/vendor/
 ./idea/
+/app/public/uploads/
