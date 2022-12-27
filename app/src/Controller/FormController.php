@@ -29,7 +29,7 @@ class FormController extends AbstractController
         return $this->json(['ok' => $page, 'user' => $user->getUserIdentifier()]);
     }
 
-    #[Route('/')]
+    #[Route('/', name: 'index')]
     public function newForm(Request $request): Response
     {
         $page = new Page();
