@@ -99,4 +99,12 @@ class Book
         $this->imageFileName = $imageFileName;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
 }

@@ -39,6 +39,12 @@ class BookController extends AbstractController
         return $this->json(['books' => $books]);
     }
 
+    #[Route('/book/all-ordered')]
+    public function findAllOrdered(): Response
+    {
+        return $this->json($this->bookService->findAllOrdered());
+    }
+
     #[Route('/book/like', methods: ['GET'])]
     public function bookLike(Request $request, BookRepository $bookRepository): Response
     {
@@ -48,6 +54,29 @@ class BookController extends AbstractController
 
         $books = $bookRepository->getBookLike($bookLike);
         return $this->json($books);
+    }
+
+    #[Route('/book/sum-pages/{id}', name: 'sum_pages', methods: ['GET'])]
+    public function getSumPageNumberForBook(int $id): Response
+    {
+        $sum = $this->bookService->getSumPageNumberForBook($id);
+        return $this->json([
+            'sum_number_pages' => $sum,
+            'bookId' => $id
+        ]);
+    }
+
+    #[Route('/book/get-all-raw')]
+    public function getAllRaw(): Response
+    {
+        return $this->json($this->bookService->getAllUsingPureSql());
+    }
+
+    #[Route('/book/statistic')]
+    public function getStatisticByBook(): Response
+    {
+        $statistic = $this->bookService->getStatisticByBook();
+        return $this->json($statistic);
     }
 
     #[Route('/book/{color}/color/{page}', methods: ['GET'])]
@@ -69,10 +98,17 @@ class BookController extends AbstractController
         return $this->json($data);
     }
 
+    #[Route('/book/redblue', methods: ['GET'])]
+    public function findRedOrBlueBooks(): Response
+    {
+        return $this->json($this->bookService->findRedOrBlueColorBooks());
+    }
+
     #[Route('/book/{id}', name: 'get_book_by_id', methods: ['GET'])]
     public function getById(int $id): Response
     {
-        $book = $this->em->getRepository(Book::class)->find($id);
+//        $book = $this->em->getRepository(Book::class)->find($id);
+        $book = $this->bookService->findOne($id);
         return $this->json($book);
     }
 
@@ -81,10 +117,11 @@ class BookController extends AbstractController
      */
     #[Route('/book/upload', name: 'book_upload', methods: ['POST'])]
     public function uploadFile(
-        Request $request,
+        Request        $request,
         BookRepository $bookRepository,
         UploadedHelper $uploadedHelper
-    ): Response {
+    ): Response
+    {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('image');
         if ($uploadedFile) {
