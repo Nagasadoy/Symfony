@@ -20,7 +20,7 @@ class BookService
 
     public function getAll(): array
     {
-        echo $this->security->getUser()?->getUserIdentifier() ?? 'nobody'; // С помощью security можно получить доступ к
+//        echo $this->security->getUser()?->getUserIdentifier() ?? 'nobody'; // С помощью security можно получить доступ к
         // авторизованному пользователю
         return $this->bookRepository->findAll();
     }

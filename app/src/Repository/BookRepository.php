@@ -21,6 +21,9 @@ class BookRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Book::class);
+
+        $filters = $this->getEntityManager()->getFilters()->enable('book_color_filter');
+        $filters->setParameter('color', 'red');
     }
 
     public function save(Book $entity, bool $flush = false): void
