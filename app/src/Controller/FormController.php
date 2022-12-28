@@ -6,6 +6,7 @@ use App\Entity\Book;
 use App\Entity\Page;
 use App\Form\PageType;
 use App\Repository\PageRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -29,6 +30,7 @@ class FormController extends AbstractController
         return $this->json(['ok' => $page, 'user' => $user->getUserIdentifier()]);
     }
 
+    #[isGranted('IS_AUTHENTICATED_FULLY')]
     #[Route('/', name: 'index')]
     public function newForm(Request $request): Response
     {

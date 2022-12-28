@@ -48,7 +48,8 @@ final class BookFactory extends ModelFactory
     {
         return [
             'color' => self::faker()->randomElement(['blue', 'yellow', 'red', 'green', 'black', 'white']),
-            'name' => self::faker()->words(2, true)
+            'name' => self::faker()->words(2, true),
+            'fileName' => self::faker()->words(1, true)
         ];
     }
 

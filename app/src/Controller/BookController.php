@@ -28,7 +28,7 @@ class BookController extends AbstractController
     {
     }
 
-//    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route('/book', name: 'get_book_all', methods: ['GET'])]
     public function getAll(): Response
     {
