@@ -12,6 +12,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             bool $isDebug: '%kernel.debug%' # Теперь везде где у нас есть это свойство оно будет равно этой переменной
+            $formLoginAuthenticator: '@security.authenticator.form_login.main'
 
 
     # makes classes in src/ available to be used as services

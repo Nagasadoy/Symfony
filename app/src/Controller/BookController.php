@@ -30,13 +30,19 @@ class BookController extends AbstractController
 
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route('/book', name: 'get_book_all', methods: ['GET'])]
-    public function getAll(): Response
+    public function getAll(Request $request): Response
     {
 //        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Доступ ограничен,
 //            только админы могут посмотреть весь список');
 
+        dd($request->getSession());
+
         $books = $this->bookService->getAll();
-        return $this->json(['books' => $books]);
+        $email = $this->bookService->getUserEmail();
+        return $this->json([
+            'books' => $books,
+            'email'=> $email
+        ]);
     }
 
     #[Route('/book/all-ordered')]

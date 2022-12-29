@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator;
 
 class RegistrationController extends AbstractController
 {
@@ -18,8 +20,12 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/registration', name: 'registration', methods: ['POST'])]
-    public function registration(Request $request, UserPasswordHasherInterface $passwordHasher): Response
-    {
+    public function registration(
+        Request $request,
+        UserPasswordHasherInterface $passwordHasher,
+        UserAuthenticatorInterface $userAuthenticator,
+        FormLoginAuthenticator $formLoginAuthenticator
+    ): Response {
         $content = $request->toArray();
 
         $email = $content['email'];
@@ -39,6 +45,7 @@ class RegistrationController extends AbstractController
 
         $this->userRepository->save($user, flush: true);
 
+        $userAuthenticator->authenticateUser($user, $formLoginAuthenticator, $request);
 
         return $this->json([
             'user' => $user

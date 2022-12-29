@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Entity\Book;
+use App\Entity\User;
 use App\Repository\BookRepository;
 use Symfony\Component\Security\Core\Security;
 
@@ -56,6 +57,11 @@ class BookService
     public function getAllUsingPureSql(): array
     {
         return $this->bookRepository->getAllUsingPureSql();
+    }
+
+    public function getUserEmail(): ?string
+    {
+        return $this->security->getUser()?->getUserIdentifier();
     }
 
 }
