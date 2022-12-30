@@ -40,6 +40,9 @@ security:
                 always_remember_me: true
             login_throttling: true
             switch_user: true
+            two_factor:
+                auth_form_path: 2fa_login
+                check_path: 2fa_login_check
 #        login:
 #            pattern: ^/api/login
 #            stateless: true
@@ -55,7 +58,9 @@ security:
 #            jwt: ~
 #
     access_control:
+        - { path: ^/logout, role: PUBLIC_ACCESS }
         - { path: ^/admin/login, roles: PUBLIC_ACCESS }
+        - { path: ^/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
 
 when@test:
