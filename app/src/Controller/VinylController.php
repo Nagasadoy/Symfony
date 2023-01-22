@@ -19,8 +19,6 @@ class VinylController extends AbstractController
     ): Response
     {
 
-        dd($this->getParameter('cache_adapter'));
-
         $mixes = $cache->get('mixes_data', function () use ($httpClient) {
             $response = $httpClient->request(
                 'GET',
