@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminLoginController extends AbstractController
 {
     #[IsGranted('PUBLIC_ACCESS')]
-    #[Route('/admin/login')]
+    #[Route('/admin/login', name: 'admin_login')]
     public function login()
     {
         return new Response('форма логина для админов');

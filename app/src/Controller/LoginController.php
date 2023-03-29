@@ -21,4 +21,12 @@ class LoginController extends AbstractController
                 'error' => $error
             ]); // LoginController
     }
+
+    #[Route('/api/login', name: 'api_login')]
+    public function apiLogin(AuthenticationUtils $authenticationUtils): Response
+    {
+        $error = $authenticationUtils->getLastAuthenticationError();
+        dd($error);
+        return $this->json(['message' => 'Пользователь аутентифицирован!']);
+    }
 }

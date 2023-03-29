@@ -26,23 +26,21 @@ security:
 #            custom_authenticator:
 #                - App\Security\LoginFormAuthenticator
 #                - App\Security\DummyAuthenticator
-            entry_point: form_login
-            form_login:
-                username_parameter: email
-                password_parameter: password
-                login_path: app_login
-                check_path: app_login
-                enable_csrf: true
-            logout:
-                target: /
-            remember_me:
-                secret: '%kernel.secret%'
-                always_remember_me: true
-            login_throttling: true
-            switch_user: true
-            two_factor:
-                auth_form_path: 2fa_login
-                check_path: 2fa_login_check
+#            entry_point: form_login
+#            form_login:
+#                username_parameter: email
+#                password_parameter: password
+#                login_path: app_login
+#                check_path: app_login
+#                enable_csrf: true
+#            logout:
+#                target: /
+#            remember_me:
+#                secret: '%kernel.secret%'
+#                always_remember_me: true
+#            login_throttling: true
+#            switch_user: true
+            custom_authenticator: App\Security\ApiCustomAuthenticator
 #        login:
 #            pattern: ^/api/login
 #            stateless: true

@@ -6,7 +6,7 @@ use App\Entity\Book;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class BookNormalizer implements NormalizerInterface
+class BookNormalizer implements Encoder
 {
     public function __construct(/*private string $param*/)
     {
